@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pakyu keischia</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #1a1a2e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Arial Black', Arial, sans-serif;
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 8vw, 5rem);
+      color: #ff2d55;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      text-shadow:
+        0 0 10px #ff2d55,
+        0 0 30px #ff2d55,
+        0 0 60px #ff005580;
+      margin-bottom: 30px;
+      animation: pulse 1.5s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .photo-wrapper {
+      position: relative;
+      display: inline-block;
+      z-index: 1;
+    }
+
+    .photo-wrapper img {
+      width: clamp(160px, 35vw, 280px);
+      height: clamp(160px, 35vw, 280px);
+      object-fit: cover;
+      border-radius: 50%;
+      border: 5px solid #ff2d55;
+      box-shadow:
+        0 0 20px #ff2d55,
+        0 0 50px #ff005580;
+      display: block;
+    }
+
+    .photo-wrapper .label {
+      margin-top: 14px;
+      text-align: center;
+      color: #fff;
+      font-size: clamp(1rem, 4vw, 1.4rem);
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px #ff2d55;
+    }
+
+    /* Middle finger emoji that pops up on click */
+    .finger {
+      position: fixed;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      pointer-events: none;
+      animation: popFade 0.9s ease forwards;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 0 8px rgba(255, 45, 85, 0.8));
+    }
+
+    @keyframes popFade {
+      0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
+      30%  { opacity: 1; transform: translate(-50%, -80%) scale(1.3); }
+      60%  { opacity: 1; transform: translate(-50%, -110%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -160%) scale(0.8); }
+    }
+
+    /* Subtle background particles */
+    .bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #ff2d55;
+      opacity: 0;
+      animation: drift linear infinite;
+    }
+
+    @keyframes drift {
+      0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.3; }
+      100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background particles -->
+  <div class="bg" id="bg"></div>
+
+  <h1>pakyu keischia</h1>
+
+  <div class="photo-wrapper">
+    <img src="keischia.jpg" alt="Keischia" onerror="this.style.background='#ff2d5533';this.style.border='4px dashed #ff2d55';this.removeAttribute('onerror')" />
+    <div class="label">keischia</div>
+  </div>
+
+  <script>
+    // Spawn background particles
+    const bg = document.getElementById('bg');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (4 + Math.random() * 8) + 's';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.width = p.style.height = (2 + Math.random() * 5) + 'px';
+      bg.appendChild(p);
+    }
+
+    // Pop a middle finger wherever the user clicks/taps
+    function spawnFinger(x, y) {
+      const el = document.createElement('span');
+      el.className = 'finger';
+      el.textContent = '🖕';
+      el.style.left = x + 'px';
+      el.style.top  = y + 'px';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+
+    document.addEventListener('click', (e) => {
+      spawnFinger(e.clientX, e.clientY);
+    });
+
+    // Touch support for mobile
+    document.addEventListener('touchstart', (e) => {
+      Array.from(e.changedTouches).forEach(t => {
+        spawnFinger(t.clientX, t.clientY);
+      });
+    }, { passive: true });
+  </script>
+</body>
+</html>
