@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pakyu keischia</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       min-height: 100vh;
@@ -19,148 +15,508 @@
       align-items: center;
       justify-content: center;
       font-family: 'Arial Black', Arial, sans-serif;
-      overflow: hidden;
-      cursor: pointer;
+      overflow-x: hidden;
       user-select: none;
     }
 
-    h1 {
-      font-size: clamp(2rem, 8vw, 5rem);
-      color: #ff2d55;
-      text-transform: uppercase;
-      letter-spacing: 4px;
-      text-shadow:
-        0 0 10px #ff2d55,
-        0 0 30px #ff2d55,
-        0 0 60px #ff005580;
-      margin-bottom: 30px;
-      animation: pulse 1.5s ease-in-out infinite;
-      z-index: 1;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .photo-wrapper {
-      position: relative;
-      display: inline-block;
-      z-index: 1;
-    }
-
-    .photo-wrapper img {
-      width: clamp(160px, 35vw, 280px);
-      height: clamp(160px, 35vw, 280px);
-      object-fit: cover;
-      border-radius: 50%;
-      border: 5px solid #ff2d55;
-      box-shadow:
-        0 0 20px #ff2d55,
-        0 0 50px #ff005580;
-      display: block;
-    }
-
-    .photo-wrapper .label {
-      margin-top: 14px;
-      text-align: center;
-      color: #fff;
-      font-size: clamp(1rem, 4vw, 1.4rem);
-      letter-spacing: 2px;
-      text-shadow: 0 0 8px #ff2d55;
-    }
-
-    /* Middle finger emoji that pops up on click */
-    .finger {
-      position: fixed;
-      font-size: clamp(2.5rem, 8vw, 4rem);
-      pointer-events: none;
-      animation: popFade 0.9s ease forwards;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      filter: drop-shadow(0 0 8px rgba(255, 45, 85, 0.8));
-    }
-
-    @keyframes popFade {
-      0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
-      30%  { opacity: 1; transform: translate(-50%, -80%) scale(1.3); }
-      60%  { opacity: 1; transform: translate(-50%, -110%) scale(1); }
-      100% { opacity: 0; transform: translate(-50%, -160%) scale(0.8); }
-    }
-
-    /* Subtle background particles */
-    .bg {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
-    }
-
+    /* ── BG PARTICLES ── */
+    .bg { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
     .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: #ff2d55;
-      opacity: 0;
+      position: absolute; border-radius: 50%; background: #ff2d55; opacity: 0;
       animation: drift linear infinite;
     }
-
     @keyframes drift {
       0%   { opacity: 0; transform: translateY(100vh) scale(0); }
       10%  { opacity: 0.6; }
       90%  { opacity: 0.3; }
       100% { opacity: 0; transform: translateY(-10vh) scale(1); }
     }
+
+    /* ── SCREENS ── */
+    .screen {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 20px; width: 100%; padding: 20px;
+    }
+    .screen.hidden { display: none; }
+
+    /* ── TITLE ── */
+    h1 {
+      font-size: clamp(2rem, 8vw, 5rem);
+      color: #ff2d55; text-transform: uppercase; letter-spacing: 4px;
+      text-shadow: 0 0 10px #ff2d55, 0 0 30px #ff2d55, 0 0 60px #ff005580;
+      animation: pulse 1.5s ease-in-out infinite;
+      text-align: center;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+
+    /* ── PHOTO ── */
+    .photo-wrapper { position: relative; display: inline-block; }
+    .photo-wrapper img {
+      width: clamp(130px, 28vw, 220px);
+      height: clamp(130px, 28vw, 220px);
+      object-fit: cover; border-radius: 50%;
+      border: 5px solid #ff2d55;
+      box-shadow: 0 0 20px #ff2d55, 0 0 50px #ff005580;
+      display: block;
+      transition: transform 0.1s;
+    }
+    .photo-wrapper img.shake {
+      animation: shake 0.15s ease;
+    }
+    @keyframes shake {
+      0%,100%{transform:rotate(0deg)}
+      25%{transform:rotate(-6deg) scale(1.05)}
+      75%{transform:rotate(6deg) scale(1.05)}
+    }
+    .photo-wrapper .label {
+      margin-top: 10px; text-align: center;
+      color: #fff; font-size: clamp(0.9rem, 3.5vw, 1.3rem);
+      letter-spacing: 2px; text-shadow: 0 0 8px #ff2d55;
+    }
+
+    /* ── HUD ── */
+    .hud {
+      display: flex; gap: 40px; align-items: center; justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hud-box {
+      background: #ffffff10; border: 2px solid #ff2d5566;
+      border-radius: 12px; padding: 10px 24px; text-align: center;
+      min-width: 110px;
+    }
+    .hud-box .hud-label { color: #ff2d55aa; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
+    .hud-box .hud-value { color: #fff; font-size: clamp(1.8rem, 6vw, 2.8rem); font-weight: 900; line-height: 1.1; }
+    #timer.warning { color: #ff2d55; animation: blink 0.5s step-start infinite; }
+    @keyframes blink { 50%{opacity:0} }
+
+    /* ── BUTTONS ── */
+    .btn {
+      padding: 14px 40px; font-size: clamp(1rem, 4vw, 1.3rem);
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-weight: 900; letter-spacing: 3px; text-transform: uppercase;
+      border: none; border-radius: 50px; cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn:active { transform: scale(0.95); }
+    .btn-start {
+      background: linear-gradient(135deg, #ff2d55, #ff6a00);
+      color: #fff;
+      box-shadow: 0 0 20px #ff2d5566, 0 6px 20px #0006;
+    }
+    .btn-start:hover { box-shadow: 0 0 35px #ff2d55, 0 6px 20px #0006; }
+    .btn-secondary {
+      background: #ffffff15; color: #fff;
+      border: 2px solid #ff2d5566;
+    }
+    .btn-secondary:hover { background: #ff2d5522; }
+
+    /* ── GAME SCREEN LAYOUT ── */
+    #game-screen { gap: 16px; }
+    #click-area {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    /* ── RESULT SCREEN ── */
+    .result-card {
+      background: #ffffff08; border: 2px solid #ff2d5555;
+      border-radius: 20px; padding: 28px 36px;
+      text-align: center; color: #fff; width: min(380px, 90vw);
+    }
+    .result-card .big-score {
+      font-size: clamp(3rem, 12vw, 5rem); color: #ff2d55;
+      text-shadow: 0 0 20px #ff2d55; font-weight: 900; line-height: 1;
+    }
+    .result-card p { color: #ffffff99; margin: 8px 0; font-size: 0.95rem; letter-spacing: 1px; }
+    .name-input {
+      margin-top: 16px; width: 100%; padding: 12px 16px;
+      background: #ffffff10; border: 2px solid #ff2d5566;
+      border-radius: 10px; color: #fff; font-size: 1rem;
+      font-family: inherit; outline: none; text-align: center;
+      transition: border-color 0.2s;
+    }
+    .name-input:focus { border-color: #ff2d55; }
+    .name-input::placeholder { color: #ffffff44; }
+    .save-row { display: flex; gap: 10px; margin-top: 10px; width: 100%; }
+    .save-row .btn { flex: 1; }
+
+    /* ── SCOREBOARD ── */
+    #scoreboard-screen { gap: 16px; }
+    .board-wrap {
+      width: min(420px, 92vw);
+      background: #ffffff08; border: 2px solid #ff2d5533;
+      border-radius: 20px; overflow: hidden;
+    }
+    .board-title {
+      background: #ff2d5522; padding: 12px 20px;
+      color: #ff2d55; font-size: 1rem; letter-spacing: 3px;
+      text-transform: uppercase; text-align: center;
+      border-bottom: 1px solid #ff2d5533;
+    }
+    .board-list { list-style: none; max-height: 380px; overflow-y: auto; }
+    .board-list::-webkit-scrollbar { width: 4px; }
+    .board-list::-webkit-scrollbar-thumb { background: #ff2d5566; border-radius: 4px; }
+    .board-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 20px; border-bottom: 1px solid #ffffff0a;
+      transition: background 0.15s;
+    }
+    .board-item:last-child { border-bottom: none; }
+    .board-item:hover { background: #ff2d5510; }
+    .board-item.highlight { background: #ff2d5522; }
+    .rank {
+      font-size: 0.85rem; color: #ff2d55aa; width: 28px;
+      text-align: center; font-weight: 900; flex-shrink: 0;
+    }
+    .rank.gold   { color: #ffd700; font-size: 1.1rem; }
+    .rank.silver { color: #c0c0c0; font-size: 1.0rem; }
+    .rank.bronze { color: #cd7f32; font-size: 1.0rem; }
+    .board-name { flex: 1; color: #fff; font-size: 0.95rem; letter-spacing: 1px; }
+    .board-score { color: #ff2d55; font-weight: 900; font-size: 1.1rem; }
+    .board-date  { color: #ffffff44; font-size: 0.7rem; }
+    .board-empty { padding: 30px; text-align: center; color: #ffffff33; font-size: 0.9rem; }
+    .loading-text { padding: 30px; text-align: center; color: #ff2d5566; font-size: 0.9rem; letter-spacing: 2px; }
+
+    /* ── MIDDLE FINGER EMOJI ── */
+    .finger {
+      position: fixed; font-size: clamp(2rem, 7vw, 3.5rem);
+      pointer-events: none;
+      animation: popFade 0.8s ease forwards;
+      z-index: 9999; transform: translate(-50%, -50%);
+      filter: drop-shadow(0 0 8px rgba(255,45,85,0.9));
+    }
+    @keyframes popFade {
+      0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.2); }
+      30%  { opacity: 1; transform: translate(-50%, -80%) scale(1.4); }
+      60%  { opacity: 1; transform: translate(-50%, -110%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -170%) scale(0.7); }
+    }
+
+    /* ── STATUS MSG ── */
+    .status-msg {
+      font-size: 0.85rem; letter-spacing: 1px;
+      color: #ffffff66; min-height: 20px; text-align: center;
+    }
+    .status-msg.error { color: #ff2d55; }
+    .status-msg.success { color: #4cff91; }
   </style>
 </head>
 <body>
 
-  <!-- Background particles -->
-  <div class="bg" id="bg"></div>
+<div class="bg" id="bg"></div>
 
+<!-- ══════════════════════════════════════
+     SCREEN 1 — START
+══════════════════════════════════════ -->
+<div class="screen" id="start-screen">
   <h1>pakyu keischia</h1>
-
-  <div class="photo-wrapper">
-    <img src="keischia.jpg" alt="Keischia" onerror="this.style.background='#ff2d5533';this.style.border='4px dashed #ff2d55';this.removeAttribute('onerror')" />
+  <div class="photo-wrapper" id="idle-photo">
+    <img src="keischia.jpg" alt="Keischia"
+         onerror="this.style.background='#ff2d5533';this.style.border='4px dashed #ff2d55';this.removeAttribute('onerror')" />
     <div class="label">keischia</div>
   </div>
+  <p style="color:#ffffff66;font-size:0.9rem;letter-spacing:2px;text-align:center">
+    click her as fast as you can for 30 seconds
+  </p>
+  <button class="btn btn-start" id="start-btn">START</button>
+  <button class="btn btn-secondary" id="go-board-btn" style="font-size:0.85rem;padding:10px 28px">
+    🏆 scoreboard
+  </button>
+</div>
 
-  <script>
-    // Spawn background particles
-    const bg = document.getElementById('bg');
-    for (let i = 0; i < 30; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.style.left = Math.random() * 100 + 'vw';
-      p.style.animationDuration = (4 + Math.random() * 8) + 's';
-      p.style.animationDelay = (Math.random() * 8) + 's';
-      p.style.width = p.style.height = (2 + Math.random() * 5) + 'px';
-      bg.appendChild(p);
-    }
+<!-- ══════════════════════════════════════
+     SCREEN 2 — GAME
+══════════════════════════════════════ -->
+<div class="screen hidden" id="game-screen">
+  <h1 style="font-size:clamp(1.3rem,5vw,2.8rem)">pakyu keischia</h1>
 
-    // Pop a middle finger wherever the user clicks/taps
-    function spawnFinger(x, y) {
-      const el = document.createElement('span');
-      el.className = 'finger';
-      el.textContent = '🖕';
-      el.style.left = x + 'px';
-      el.style.top  = y + 'px';
-      document.body.appendChild(el);
-      el.addEventListener('animationend', () => el.remove());
-    }
+  <div class="hud">
+    <div class="hud-box">
+      <div class="hud-label">clicks</div>
+      <div class="hud-value" id="score-display">0</div>
+    </div>
+    <div class="hud-box">
+      <div class="hud-label">time</div>
+      <div class="hud-value" id="timer">30</div>
+    </div>
+  </div>
 
-    document.addEventListener('click', (e) => {
-      spawnFinger(e.clientX, e.clientY);
+  <div id="click-area">
+    <div class="photo-wrapper">
+      <img id="game-img" src="keischia.png" alt="Keischia"
+           onerror="this.style.background='#ff2d5533';this.style.border='4px dashed #ff2d55';this.removeAttribute('onerror')" />
+      <div class="label">keischia</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 3 — RESULT
+══════════════════════════════════════ -->
+<div class="screen hidden" id="result-screen">
+  <h1 style="font-size:clamp(1.5rem,5vw,3rem)">time's up!</h1>
+  <div class="result-card">
+    <p>you clicked her</p>
+    <div class="big-score" id="final-score">0</div>
+    <p>times in 30 seconds</p>
+    <input class="name-input" id="name-input" type="text" maxlength="20"
+           placeholder="enter your name to save" autocomplete="off" />
+    <div class="save-row">
+      <button class="btn btn-start" id="save-btn">save score</button>
+      <button class="btn btn-secondary" id="skip-btn">skip</button>
+    </div>
+    <div class="status-msg" id="save-status"></div>
+  </div>
+  <button class="btn btn-secondary" style="font-size:0.85rem;padding:10px 28px" id="play-again-btn">
+    play again
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 4 — SCOREBOARD
+══════════════════════════════════════ -->
+<div class="screen hidden" id="scoreboard-screen">
+  <h1 style="font-size:clamp(1.5rem,5vw,3rem)">🏆 scoreboard</h1>
+  <div class="board-wrap">
+    <div class="board-title">top pakyu players</div>
+    <ul class="board-list" id="board-list">
+      <li class="loading-text">loading...</li>
+    </ul>
+  </div>
+  <button class="btn btn-secondary" style="font-size:0.85rem;padding:10px 28px" id="back-btn">
+    ← back
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════
+     FIREBASE SDK  (v9 compat)
+══════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════
+   FIREBASE CONFIG  ← replace with your own
+   (Project Settings → Your apps → Config)
+═══════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyC4h_9gss9wLnUoih407KrygkCo4uyGv7k",
+  authDomain: "keischiapakyu.firebaseapp.com",
+  projectId: "keischiapakyu",
+  storageBucket: "keischiapakyu.firebasestorage.app",
+  messagingSenderId: "1018064971319",
+  appId: "1:1018064971319:web:89eb5a5574ac521ea8c1b2",
+  measurementId: "G-L3QVKF6J6L"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const COLLECTION = "scores";
+
+/* ═══════════════════════════════════════════
+   BG PARTICLES
+═══════════════════════════════════════════ */
+const bgEl = document.getElementById('bg');
+for (let i = 0; i < 30; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.animationDuration = (4 + Math.random() * 8) + 's';
+  p.style.animationDelay = (Math.random() * 8) + 's';
+  p.style.width = p.style.height = (2 + Math.random() * 5) + 'px';
+  bgEl.appendChild(p);
+}
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let score       = 0;
+let timeLeft    = 30;
+let timerHandle = null;
+let gameActive  = false;
+let lastHighlight = null; // track which board row is player's new entry
+
+/* ═══════════════════════════════════════════
+   SCREEN HELPERS
+═══════════════════════════════════════════ */
+const screens = {
+  start:      document.getElementById('start-screen'),
+  game:       document.getElementById('game-screen'),
+  result:     document.getElementById('result-screen'),
+  scoreboard: document.getElementById('scoreboard-screen'),
+};
+function showScreen(name) {
+  Object.values(screens).forEach(s => s.classList.add('hidden'));
+  screens[name].classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════
+   MIDDLE FINGER SPAWN
+═══════════════════════════════════════════ */
+function spawnFinger(x, y) {
+  const el = document.createElement('span');
+  el.className = 'finger';
+  el.textContent = '🖕';
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+/* ═══════════════════════════════════════════
+   GAME LOGIC
+═══════════════════════════════════════════ */
+function startGame() {
+  score     = 0;
+  timeLeft  = 30;
+  gameActive = true;
+  document.getElementById('score-display').textContent = '0';
+  document.getElementById('timer').textContent = '30';
+  document.getElementById('timer').classList.remove('warning');
+  showScreen('game');
+
+  timerHandle = setInterval(() => {
+    timeLeft--;
+    const timerEl = document.getElementById('timer');
+    timerEl.textContent = timeLeft;
+    if (timeLeft <= 5) timerEl.classList.add('warning');
+    if (timeLeft <= 0) endGame();
+  }, 1000);
+}
+
+function endGame() {
+  clearInterval(timerHandle);
+  gameActive = false;
+  document.getElementById('final-score').textContent = score;
+  document.getElementById('save-status').textContent = '';
+  document.getElementById('save-status').className = 'status-msg';
+  document.getElementById('name-input').value = '';
+  showScreen('result');
+}
+
+/* click / tap on game photo */
+const clickArea = document.getElementById('click-area');
+const gameImg   = document.getElementById('game-img');
+
+function handleGameClick(x, y) {
+  if (!gameActive) return;
+  score++;
+  document.getElementById('score-display').textContent = score;
+  spawnFinger(x, y);
+  gameImg.classList.remove('shake');
+  void gameImg.offsetWidth; // reflow to restart animation
+  gameImg.classList.add('shake');
+}
+
+clickArea.addEventListener('click', e => {
+  handleGameClick(e.clientX, e.clientY);
+});
+clickArea.addEventListener('touchstart', e => {
+  e.preventDefault();
+  Array.from(e.changedTouches).forEach(t => handleGameClick(t.clientX, t.clientY));
+}, { passive: false });
+
+/* ═══════════════════════════════════════════
+   SAVE SCORE
+═══════════════════════════════════════════ */
+async function saveScore() {
+  const name = document.getElementById('name-input').value.trim();
+  const statusEl = document.getElementById('save-status');
+
+  if (!name) {
+    statusEl.textContent = 'please enter a name';
+    statusEl.className = 'status-msg error';
+    return;
+  }
+
+  document.getElementById('save-btn').disabled = true;
+  statusEl.textContent = 'saving...';
+  statusEl.className = 'status-msg';
+
+  try {
+    const docRef = await db.collection(COLLECTION).add({
+      name:      name,
+      score:     score,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
+    lastHighlight = docRef.id;
+    statusEl.textContent = '✓ score saved!';
+    statusEl.className = 'status-msg success';
+    setTimeout(() => {
+      showScoreboard();
+    }, 800);
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent = 'error saving. check firebase config.';
+    statusEl.className = 'status-msg error';
+    document.getElementById('save-btn').disabled = false;
+  }
+}
 
-    // Touch support for mobile
-    document.addEventListener('touchstart', (e) => {
-      Array.from(e.changedTouches).forEach(t => {
-        spawnFinger(t.clientX, t.clientY);
-      });
-    }, { passive: true });
-  </script>
+/* ═══════════════════════════════════════════
+   SCOREBOARD
+═══════════════════════════════════════════ */
+async function showScoreboard() {
+  showScreen('scoreboard');
+  const listEl = document.getElementById('board-list');
+  listEl.innerHTML = '<li class="loading-text">loading...</li>';
+
+  try {
+    const snap = await db.collection(COLLECTION)
+      .orderBy('score', 'desc')
+      .limit(20)
+      .get();
+
+    if (snap.empty) {
+      listEl.innerHTML = '<li class="board-empty">no scores yet. be the first!</li>';
+      return;
+    }
+
+    const rankIcons = ['🥇','🥈','🥉'];
+    const rankClass = ['gold','silver','bronze'];
+
+    listEl.innerHTML = '';
+    snap.docs.forEach((doc, i) => {
+      const d   = doc.data();
+      const li  = document.createElement('li');
+      li.className = 'board-item' + (doc.id === lastHighlight ? ' highlight' : '');
+
+      const ts = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : '';
+
+      li.innerHTML = `
+        <span class="rank ${rankClass[i] || ''}">${rankIcons[i] || (i + 1)}</span>
+        <span class="board-name">${escHtml(d.name)}</span>
+        <span class="board-date">${ts}</span>
+        <span class="board-score">${d.score}</span>
+      `;
+      listEl.appendChild(li);
+    });
+  } catch (err) {
+    console.error(err);
+    listEl.innerHTML = '<li class="board-empty">failed to load. check firebase config.</li>';
+  }
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ═══════════════════════════════════════════
+   BUTTON WIRING
+═══════════════════════════════════════════ */
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('go-board-btn').addEventListener('click', () => { lastHighlight = null; showScoreboard(); });
+document.getElementById('save-btn').addEventListener('click', saveScore);
+document.getElementById('skip-btn').addEventListener('click', () => { lastHighlight = null; showScoreboard(); });
+document.getElementById('play-again-btn').addEventListener('click', startGame);
+document.getElementById('back-btn').addEventListener('click', () => showScreen('start'));
+
+/* enter key on name input */
+document.getElementById('name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') saveScore();
+});
+</script>
 </body>
 </html>
